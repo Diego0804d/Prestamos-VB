@@ -1,0 +1,120 @@
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.Button
+
+Public Class Form1
+
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Estilo visual
+        total_interes.BackColor = Color.White
+        total_interes.ForeColor = Color.Black
+        total_interes.Font = New Font(total_interes.Font, FontStyle.Bold)
+
+        total_mensual.BackColor = Color.White
+        total_mensual.ForeColor = Color.Black
+        total_mensual.Font = New Font(total_mensual.Font, FontStyle.Bold)
+
+        total_pagar.BackColor = Color.White
+        total_pagar.ForeColor = Color.Black
+        total_pagar.Font = New Font(total_pagar.Font, FontStyle.Bold)
+
+        calcular.Font = New Font(calcular.Font, FontStyle.Bold)
+        limpiar.Font = New Font(limpiar.Font, FontStyle.Bold)
+
+        'Evita que le camien el tamaño
+        Me.FormBorderStyle = FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
+
+    End Sub
+
+
+    Private Sub calcular_Click(sender As Object, e As EventArgs) Handles calcular.Click
+        'Aqui estoy revisando si el usurio le falto un dato
+        If String.IsNullOrEmpty(monto_prestamo.Text) And String.IsNullOrEmpty(interes_prestamo.Text) And String.IsNullOrEmpty(tiempo_prestamo.Text) Then
+            MessageBox.Show("Eror 3312: Todos los cuadros estan vacios, por favor revise con detenimiento")
+            Exit Sub
+        End If
+
+        If String.IsNullOrEmpty(monto_prestamo.Text) And String.IsNullOrEmpty(interes_prestamo.Text) Then
+            MessageBox.Show("El cuadro de monto y el cuadro de tasa de interes se encuentra vacio")
+            Exit Sub
+        End If
+
+        If String.IsNullOrEmpty(monto_prestamo.Text) And String.IsNullOrEmpty(tiempo_prestamo.Text) Then
+            MessageBox.Show("El cuadro de monto y el tiempo se encuentra vacio")
+            Exit Sub
+        End If
+
+        If String.IsNullOrEmpty(interes_prestamo.Text) And String.IsNullOrEmpty(tiempo_prestamo.Text) Then
+            MessageBox.Show("El cuadro de tasa de interes y el tiempo se encuentra vacio")
+            Exit Sub
+        End If
+
+        If String.IsNullOrEmpty(monto_prestamo.Text) Then
+            MessageBox.Show("El cuadro de monto se encuentra vacio")
+            Exit Sub
+        End If
+
+        If String.IsNullOrEmpty(interes_prestamo.Text) Then
+            MessageBox.Show("El cuadro de tasa de interes se encuentra vacio")
+            Exit Sub
+        End If
+
+        If String.IsNullOrEmpty(tiempo_prestamo.Text) Then
+            MessageBox.Show("El cuadro de tiempo se encuentra vacio")
+            Exit Sub
+        End If
+
+        If Not (mes.Checked Or año.Checked) Then
+            MessageBox.Show("Seleccione una opción para el tiempo (mes/año).")
+            Exit Sub
+        End If
+
+        'Valores de las variables
+        Dim prestamo As Double = Convert.ToDouble(monto_prestamo.Text)
+        Dim tasa As Double = Convert.ToDouble(interes_prestamo.Text)
+        Dim tiempo As Integer = Convert.ToInt32(tiempo_prestamo.Text)
+
+        'Ajuste de tiempo depemdiendo del RadioButton
+        If año.Checked Then
+            tiempo *= 12
+        End If
+
+
+        'Calcular la cuota mensual y los intereses totales
+        Dim tasaMensual As Double = tasa / 100 / 12 ' Tasa de interés mensual
+        Dim cuota As Double = (prestamo * tasaMensual) / (1 - Math.Pow(1 + tasaMensual, -tiempo))
+        Dim interesesTotales As Double = cuota * tiempo - prestamo
+        Dim totalAPagar As Double = prestamo + interesesTotales
+
+        'Mostrar resultados
+        total_interes.Text = interesesTotales.ToString("0.00")
+        total_mensual.Text = cuota.ToString("0.00")
+        total_pagar.Text = totalAPagar.ToString("0.00")
+
+    End Sub
+
+    Private Sub limpiar_Click(sender As Object, e As EventArgs) Handles limpiar.Click
+        'Limpiar Texbox, RadioButton y Labels
+        monto_prestamo.Clear()
+        interes_prestamo.Clear()
+        tiempo_prestamo.Clear()
+
+        mes.Checked = False
+        año.Checked = False
+
+        total_interes.Text = ""
+        total_mensual.Text = ""
+        total_pagar.Text = ""
+    End Sub
+
+    Private Sub salir_Click(sender As Object, e As EventArgs) Handles salir.Click
+        'Cerrar programa
+        Me.Close()
+    End Sub
+
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs)
+
+    End Sub
+
+
+End Class
